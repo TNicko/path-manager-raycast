@@ -11,6 +11,11 @@
     "Productivity",
     "Developer Tools"
   ],
+  "keywords": [
+    "terminal",
+    "path",
+    "iterm"
+  ],
   "license": "MIT",
   "commands": [
     {
