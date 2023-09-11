@@ -15,9 +15,27 @@
   "commands": [
     {
       "name": "add-path",
-      "title": "Add Path",
-      "description": "",
+      "title": "Add path",
+      "description": "Stores a file path with an alias for easy access later.",
       "mode": "view"
+    },
+    {
+      "name": "list-paths",
+      "title": "List paths",
+      "description": "Display a list of all saved paths and their aliases.",
+      "mode": "view"
+    },
+    {
+      "name": "open-path",
+      "title": "Open path",
+      "description": "Opens a terminal tab navigating to the chosen path.",
+      "mode": "no-view"
+    },
+    {
+      "name": "remove-path",
+      "title": "Remove path",
+      "description": "Removes a path and its alias from the saved list.",
+      "mode": "no-view"
     }
   ],
   "dependencies": {
