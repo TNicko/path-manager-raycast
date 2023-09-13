@@ -1,6 +1,7 @@
-import { ActionPanel, List, Action, environment } from "@raycast/api";
+import { ActionPanel, popToRoot, List, Action, environment } from "@raycast/api";
 import { useEffect, useState } from "react";
 import { promises as fs } from "fs";
+import { exec } from "child_process";
 import path from "path";
 
 const STORAGE_PATH: string = path.join(environment.supportPath, "paths.json");
@@ -10,19 +11,20 @@ export default function ListPaths() {
   const [paths, setPaths] = useState<Record<string, string>>({});
   const [filteredList, setFilteredList] = useState<{ alias: string; path: string }[]>([]);
 
-  useEffect(() => {
-    async function fetchPaths() {
-      try {
-        const rawData = await fs.readFile(STORAGE_PATH, "utf-8");
-        const parsedData: Record<string, string> = JSON.parse(rawData);
-        setPaths(parsedData);
-        setFilteredList(Object.entries(parsedData).map(([alias, path]) => ({alias, path})));
-      } catch (error: unknown) {
-        console.error("Failed to load paths:", error)
-        setPaths({});
-        setFilteredList([]);
-      }
+  async function fetchPaths() {
+    try {
+      const rawData = await fs.readFile(STORAGE_PATH, "utf-8");
+      const parsedData: Record<string, string> = JSON.parse(rawData);
+      setPaths(parsedData);
+      setFilteredList(Object.entries(parsedData).map(([alias, path]) => ({alias, path})));
+    } catch (error: unknown) {
+      console.error("Failed to load paths:", error)
+      setPaths({});
+      setFilteredList([]);
     }
+  }
+
+  useEffect(() => {
     fetchPaths();
   }, []);
 
@@ -31,6 +33,18 @@ export default function ListPaths() {
     alias.includes(searchText) || path.includes(searchText)).map(([alias, path]) => ({alias, path}));
     setFilteredList(filtered);
   }, [searchText, paths]);
+
+  function handleSubmit(pathValue: string) {
+    // Open path location in terminal
+    exec(`open -a Terminal "${pathValue}"`, (error) => {
+      if (error) {
+        console.error("Failed to open path in Terminal:", error);
+      } else {
+        // Focus on terminal and close raycast window.
+        popToRoot();
+      }
+    });
+  }
 
   return (
     <List
@@ -46,7 +60,7 @@ export default function ListPaths() {
           subtitle={path}
           actions={
             <ActionPanel>
-              <Action title="Select" onAction={() => console.log(`${alias} selected`)} />
+              <Action title="Open in terminal" onAction={() => handleSubmit(path)} />
             </ActionPanel>
           }
         />
