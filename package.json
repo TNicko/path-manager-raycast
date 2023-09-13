@@ -51,16 +51,18 @@
       "mode": "view"
     },
     {
-      "name": "open-path",
-      "title": "Open path",
+      "name": "go-to-path",
+      "title": "Go to path",
       "description": "Opens a terminal tab navigating to the chosen path.",
-      "mode": "no-view"
-    },
-    {
-      "name": "remove-path",
-      "title": "Remove path",
-      "description": "Removes a path and its alias from the saved list.",
-      "mode": "no-view"
+      "mode": "no-view",
+      "arguments": [
+        {
+          "name": "alias",
+          "placeholder": "alias",
+          "type": "text",
+          "required": true
+        }
+      ]
     }
   ],
   "dependencies": {
