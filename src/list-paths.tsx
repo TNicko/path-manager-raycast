@@ -1,15 +1,17 @@
-import { ActionPanel, popToRoot, List, Action, environment } from "@raycast/api";
+import { getPreferenceValues, ActionPanel, popToRoot, List, Action, environment } from "@raycast/api";
 import { useEffect, useState } from "react";
 import { promises as fs } from "fs";
 import { exec } from "child_process";
 import path from "path";
 
 const STORAGE_PATH: string = path.join(environment.supportPath, "paths.json");
- 
+
 export default function ListPaths() {
   const [searchText, setSearchText] = useState("");
   const [paths, setPaths] = useState<Record<string, string>>({});
   const [filteredList, setFilteredList] = useState<{ alias: string; path: string }[]>([]);
+
+  const preferences = getPreferenceValues();
 
   async function fetchPaths() {
     try {
@@ -35,8 +37,9 @@ export default function ListPaths() {
   }, [searchText, paths]);
 
   function handleSubmit(pathValue: string) {
-    // Open path location in terminal
-    exec(`open -a Terminal "${pathValue}"`, (error) => {
+    // Open path location in preferred terminal
+    const terminalApp = preferences.defaultTerminal === "iTerm" ? "iTerm" : "Terminal";
+    exec(`open -a ${terminalApp} "${pathValue}"`, (error) => {
       if (error) {
         console.error("Failed to open path in Terminal:", error);
       } else {
