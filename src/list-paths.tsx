@@ -1,12 +1,14 @@
-import { Icon, Alert, confirmAlert, getPreferenceValues, showToast, Toast, showHUD, ActionPanel, List, Action, environment } from "@raycast/api";
+import { Icon, Alert, confirmAlert, getPreferenceValues, showToast, Toast, showHUD, ActionPanel, List, Action, environment, useNavigation, popToRoot } from "@raycast/api";
 import { useEffect, useState } from "react";
 import { promises as fs } from "fs";
 import { exec } from "child_process";
 import path from "path";
+import PathForm from "./components/path-form";
 
 const STORAGE_PATH: string = path.join(environment.supportPath, "paths.json");
 
 export default function ListPaths() {
+  const { push } = useNavigation();
   const [searchText, setSearchText] = useState("");
   const [paths, setPaths] = useState<Record<string, string>>({});
   const [filteredList, setFilteredList] = useState<{ alias: string; path: string }[]>([]);
@@ -54,6 +56,61 @@ export default function ListPaths() {
         showHUD("Path opened!")
       }
     });
+  }
+
+  function handleEdit(alias: string, path: string) {
+    push(
+      <PathForm 
+        mode="edit"
+        initialAlias={alias}
+        initialPath={path}
+        onSubmit={updatePath}
+      />
+    );
+  }
+
+  async function updatePath(
+    newPath: string, 
+    newAlias: string,
+    initialAlias: string
+  ) {
+    
+    try {
+      // If the alias is being changed, check if new alias already exists
+      if (initialAlias !== newAlias && paths[newAlias]) {
+        showToast({
+        style: Toast.Style.Failure,
+        title: "Alias In Use",
+        message: `The alias "${newAlias}" is already used for the path "${paths[newAlias]}". Please choose a different alias.`,
+        });
+        return;
+      }
+    
+      // Remove the originalAlias (if it exists) and set the new data.
+      if (initialAlias) {
+        delete paths[initialAlias];
+      }
+      paths[newAlias] = newPath;
+
+      await fs.writeFile(STORAGE_PATH, JSON.stringify(paths, null, 2));
+
+      showToast({
+        style: Toast.Style.Success,
+        title: "Success",
+        message: "Path has been updated!"
+      });
+      popToRoot();
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        showToast({
+          style: Toast.Style.Failure,
+          title: "Error updating data",
+          message: error.message
+        });
+      } else {
+        throw error;
+      }
+    }
   }
 
   async function handleDelete(alias: string) {
@@ -109,6 +166,7 @@ export default function ListPaths() {
           actions={
             <ActionPanel>
               <Action title="Open in terminal" onAction={() => handleSubmit(path)} icon={Icon.Terminal} />
+              <Action title="Edit path" onAction={() => handleEdit(alias, path)}/>
               <Action title="Delete path" onAction={() => handleDelete(alias)} style={Action.Style.Destructive} icon={Icon.Trash} />
             </ActionPanel>
           }
