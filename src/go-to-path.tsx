@@ -20,10 +20,7 @@ export default async function GoToPath(props: LaunchProps) {
         title: `Path alias "${alias}" not found.`,
       });
     } else {
-      const error = openTerminal(pathToOpen, terminalApp);
-      if (!error) {
-        showHUD("Path opened!")
-      }
+      await openTerminal(pathToOpen, terminalApp);
     }
   } catch (error) {
     showToast({
@@ -34,19 +31,22 @@ export default async function GoToPath(props: LaunchProps) {
   }
 }
 
-async function openTerminal(pathValue: string, terminalApp: string) {
+function openTerminal(pathValue: string, terminalApp: string): Promise<void> {
+  return new Promise((resolve, reject) => {
     exec(`open -a ${terminalApp} "${pathValue}"`, (error) => {
       if (error) {
         showToast({
           style: Toast.Style.Failure,
           title: `Failed to open path in ${terminalApp}`,
           message: error.message,
-        }); 
+        });
+        reject(error);
       } else {
         showHUD("Path opened!")
+        resolve();
       }
-      return error;
     });
+  });  
 
 }
 
