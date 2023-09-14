@@ -1,4 +1,4 @@
-import { environment, popToRoot, showHUD, showToast, Toast, LaunchProps, getPreferenceValues } from "@raycast/api";
+import { environment, showHUD, showToast, Toast, LaunchProps, getPreferenceValues } from "@raycast/api";
 import { promises as fs } from "fs";
 import { exec } from "child_process";
 import path from "path";

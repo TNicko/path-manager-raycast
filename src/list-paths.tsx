@@ -1,4 +1,4 @@
-import { getPreferenceValues, showToast, Toast, showHUD, ActionPanel, popToRoot, List, Action, environment } from "@raycast/api";
+import { Icon, Alert, confirmAlert, getPreferenceValues, showToast, Toast, showHUD, ActionPanel, List, Action, environment } from "@raycast/api";
 import { useEffect, useState } from "react";
 import { promises as fs } from "fs";
 import { exec } from "child_process";
@@ -56,6 +56,44 @@ export default function ListPaths() {
     });
   }
 
+  async function handleDelete(alias: string) {
+    const options: Alert.Options = {
+      title: "Delete path?",
+      icon: Icon.Trash,
+      message: "Warning: this operation cannot be undone.",
+      primaryAction: {
+        title: "Delete",
+        style: Alert.ActionStyle.Destructive,
+        onAction: async () => {
+          try {
+            // Remove alias from the paths object
+            const updatedPaths = { ...paths };
+            delete updatedPaths[alias]
+
+            // Save the updated paths to storage
+            await fs.writeFile(STORAGE_PATH, JSON.stringify(updatedPaths, null, 2), "utf-8");
+
+            // Update the local state
+            setPaths(updatedPaths);
+            setFilteredList(Object.entries(updatedPaths).map(([alias, path]) => ({alias, path})));
+
+            showToast({
+              style: Toast.Style.Success,
+              title: `Path deleted successfully!`,
+            })
+          } catch (error) {
+            showToast({
+              style: Toast.Style.Failure,
+              title: "Failed to delete path",
+              message: `${error}`,
+            });
+          }
+        },
+      },
+    }
+    await confirmAlert(options);
+  }
+
   return (
     <List
       filtering={false}
@@ -70,7 +108,8 @@ export default function ListPaths() {
           subtitle={path}
           actions={
             <ActionPanel>
-              <Action title="Open in terminal" onAction={() => handleSubmit(path)} />
+              <Action title="Open in terminal" onAction={() => handleSubmit(path)} icon={Icon.Terminal} />
+              <Action title="Delete path" onAction={() => handleDelete(alias)} style={Action.Style.Destructive} icon={Icon.Trash} />
             </ActionPanel>
           }
         />
