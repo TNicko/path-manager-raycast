@@ -166,7 +166,7 @@ export default function ListPaths() {
           actions={
             <ActionPanel>
               <Action title="Open in terminal" onAction={() => handleSubmit(path)} icon={Icon.Terminal} />
-              <Action title="Edit path" onAction={() => handleEdit(alias, path)}/>
+              <Action title="Edit path" onAction={() => handleEdit(alias, path)} icon={Icon.Pencil}/>
               <Action title="Delete path" onAction={() => handleDelete(alias)} style={Action.Style.Destructive} icon={Icon.Trash} />
             </ActionPanel>
           }
