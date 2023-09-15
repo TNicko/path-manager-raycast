@@ -64,53 +64,9 @@ export default function ListPaths() {
         mode="edit"
         initialAlias={alias}
         initialPath={path}
-        onSubmit={updatePath}
+        //onSubmit={updatePath}
       />
     );
-  }
-
-  async function updatePath(
-    newPath: string, 
-    newAlias: string,
-    initialAlias: string
-  ) {
-    
-    try {
-      // If the alias is being changed, check if new alias already exists
-      if (initialAlias !== newAlias && paths[newAlias]) {
-        showToast({
-        style: Toast.Style.Failure,
-        title: "Alias In Use",
-        message: `The alias "${newAlias}" is already used for the path "${paths[newAlias]}". Please choose a different alias.`,
-        });
-        return;
-      }
-    
-      // Remove the originalAlias (if it exists) and set the new data.
-      if (initialAlias) {
-        delete paths[initialAlias];
-      }
-      paths[newAlias] = newPath;
-
-      await fs.writeFile(STORAGE_PATH, JSON.stringify(paths, null, 2));
-
-      showToast({
-        style: Toast.Style.Success,
-        title: "Success",
-        message: "Path has been updated!"
-      });
-      popToRoot();
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        showToast({
-          style: Toast.Style.Failure,
-          title: "Error updating data",
-          message: error.message
-        });
-      } else {
-        throw error;
-      }
-    }
   }
 
   async function handleDelete(alias: string) {
@@ -151,6 +107,16 @@ export default function ListPaths() {
     await confirmAlert(options);
   }
 
+  function handleAdd() {
+    push(
+      <PathForm 
+        mode="edit"
+        initialAlias={""}
+        initialPath={""}
+      />
+    );
+  }
+
   return (
     <List
       filtering={false}
@@ -168,6 +134,7 @@ export default function ListPaths() {
               <Action title="Open in terminal" onAction={() => handleSubmit(path)} icon={Icon.Terminal} />
               <Action title="Edit path" onAction={() => handleEdit(alias, path)} icon={Icon.Pencil}/>
               <Action title="Delete path" onAction={() => handleDelete(alias)} style={Action.Style.Destructive} icon={Icon.Trash} />
+              <Action title="Create path" onAction={() => handleAdd()} icon={Icon.Plus} />
             </ActionPanel>
           }
         />

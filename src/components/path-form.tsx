@@ -1,15 +1,17 @@
-import {Form, showToast, useNavigation, Toast, ActionPanel, Action } from "@raycast/api";
+import {Form, showToast, popToRoot, useNavigation, Toast, ActionPanel, Action, environment } from "@raycast/api";
 import { useState } from "react";
 import { promises as fs } from "fs";
+import path from "path";
+
+const STORAGE_PATH: string = path.join(environment.supportPath, "paths.json");
 
 interface PathFormProps {
   initialPath?: string;
   initialAlias?: string;
   mode: "add" | "edit";
-  onSubmit: (path: string, alias: string, initialAlias: string) => Promise<void>;
 }
 
-export default function PathForm({ initialPath = "", initialAlias = "", mode, onSubmit }: PathFormProps) {
+export default function PathForm({ initialPath = "", initialAlias = "", mode}: PathFormProps) {
   const { pop } = useNavigation(); 
   const [pathValue, setPath] = useState<string>(initialPath);
   const [aliasValue, setAlias] = useState<string>(initialAlias);
@@ -61,8 +63,22 @@ export default function PathForm({ initialPath = "", initialAlias = "", mode, on
 
   async function handleSubmit() {
     if (await validateForm()) {
-      await onSubmit(pathValue, aliasValue, initialAlias);
-      pop();
+      // Check if add or update form type
+      try {
+        const data = await fetchPaths();
+        if (mode === "add") {
+          handleAdd(pathValue, aliasValue, data);
+        } else {
+          handleUpdate(pathValue, aliasValue, data, initialAlias);
+        }
+        pop();
+      } catch (error) {
+        showToast({
+          style: Toast.Style.Failure,
+          title: "Failed to load paths",
+          message: `${error}`,
+        });
+      }
     }
   }
 
@@ -94,3 +110,93 @@ export default function PathForm({ initialPath = "", initialAlias = "", mode, on
     </Form>
   )
 }
+
+async function handleAdd(pathValue: string, aliasValue: string, data: Record<string, string>) {
+  try {
+    // Check if alias already exists
+    if (data[aliasValue]) {
+      showToast({
+        style: Toast.Style.Failure,
+        title: "Alias In Use",
+        message: `The alias "${aliasValue}" is already used for the path "${data[aliasValue]}". Please choose a different alias.`,
+      });
+      return;
+    }
+
+    // Save the new path and alias
+    data[aliasValue] = pathValue;
+    await fs.writeFile(STORAGE_PATH, JSON.stringify(data, null, 2));
+
+    // Provide feedback and close Raycast window
+    showToast({
+      style: Toast.Style.Success,
+      title: "Success",
+      message: "Path has been added!"
+    });
+    popToRoot();
+
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      showToast({
+        style: Toast.Style.Failure,
+        title: "Error saving data",
+        message: error.message
+      });
+    } else {
+      throw error;
+    }
+  }      
+}
+
+async function handleUpdate(
+  newPath: string, 
+  newAlias: string,
+  data: Record<string, string>,
+  initialAlias: string
+) {
+
+  try {
+    // If the alias is being changed, check if new alias already exists
+    if (initialAlias !== newAlias && data[newAlias]) {
+      showToast({
+      style: Toast.Style.Failure,
+      title: "Alias In Use",
+      message: `The alias "${newAlias}" is already used for the path "${data[newAlias]}". Please choose a different alias.`,
+      });
+      return;
+    }
+  
+    // Remove the originalAlias (if it exists) and set the new data.
+    if (initialAlias) {
+      delete data[initialAlias];
+    }
+    data[newAlias] = newPath;
+
+    await fs.writeFile(STORAGE_PATH, JSON.stringify(data, null, 2));
+
+    showToast({
+      style: Toast.Style.Success,
+      title: "Success",
+      message: "Path has been updated!"
+    });
+    popToRoot();
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      showToast({
+        style: Toast.Style.Failure,
+        title: "Error updating data",
+        message: error.message
+      });
+    } else {
+      throw error;
+    }
+  }
+}
+
+
+async function fetchPaths() {
+  const rawData = await fs.readFile(STORAGE_PATH, "utf-8");
+  const parsedData: Record<string, string> = JSON.parse(rawData);
+  return parsedData
+}
+
