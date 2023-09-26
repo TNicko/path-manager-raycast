@@ -5,6 +5,14 @@ import path from "path";
 
 const STORAGE_PATH: string = path.join(environment.supportPath, "paths.json");
 
+function isAppInstalled(appName: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    exec(`osascript -e 'id of app "${appName}"'`, (error) => {
+      resolve(!error);
+    });
+  });
+}
+
 export default async function GoToPath(props: LaunchProps) {
   const preferences = getPreferenceValues();
   const terminalApp = preferences.defaultTerminal === "iTerm" ? "iTerm" : "Terminal";
@@ -14,14 +22,13 @@ export default async function GoToPath(props: LaunchProps) {
     const paths = await fetchPaths();
     const pathToOpen = paths[alias];
 
-    if (!pathToOpen) {
-      showToast({
-        style: Toast.Style.Failure,
-        title: `Path alias "${alias}" not found.`,
-      });
-    } else {
-      await openTerminal(pathToOpen, terminalApp);
+    if (!pathToOpen) throw new Error(`Path alias "${alias}" not found.`);
+
+    if (terminalApp === "iTerm" && !(await isAppInstalled("iTerm"))) {
+      throw new Error(`iTerm is not installed on your system.`);
     }
+
+    await openTerminal(pathToOpen, terminalApp);
   } catch (error) {
     showToast({
       style: Toast.Style.Failure,
