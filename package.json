@@ -40,19 +40,19 @@
   "commands": [
     {
       "name": "add-path",
-      "title": "Add path",
+      "title": "Add Path",
       "description": "Stores a file path with an alias for easy access later.",
       "mode": "view"
     },
     {
       "name": "list-paths",
-      "title": "List paths",
+      "title": "List Paths",
       "description": "Display a list of all saved paths and their aliases.",
       "mode": "view"
     },
     {
       "name": "go-to-path",
-      "title": "Go to path",
+      "title": "Go to Path",
       "description": "Opens a terminal tab navigating to the chosen path.",
       "mode": "no-view",
       "arguments": [
