@@ -121,7 +121,7 @@ export default function ListPaths() {
     <List
       filtering={false}
       onSearchTextChange={setSearchText}
-      navigationTitle="Search Paths"
+      navigationTitle="List Paths"
       searchBarPlaceholder="Search your paths"
     >
       {filteredList.map(({alias, path}) => (
