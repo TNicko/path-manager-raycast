@@ -1,4 +1,4 @@
-import { Icon, Alert, confirmAlert, getPreferenceValues, showToast, Toast, showHUD, ActionPanel, List, Action, environment, useNavigation, popToRoot } from "@raycast/api";
+import { Icon, Alert, confirmAlert, getPreferenceValues, showToast, Toast, showHUD, ActionPanel, List, Action, environment, useNavigation} from "@raycast/api";
 import { useEffect, useState } from "react";
 import { promises as fs } from "fs";
 import { exec } from "child_process";
