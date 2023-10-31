@@ -2,7 +2,7 @@
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "path-manager",
   "title": "Path Manager",
-  "description": "Manage, search, and quickly open saved paths in the terminal.",
+  "description": "Manage, search, and quickly open saved directory paths in the terminal.",
   "icon": "command-icon.png",
   "author": "Headrsh",
   "preferences": [
