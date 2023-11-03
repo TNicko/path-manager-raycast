@@ -1,3 +1,3 @@
 # Path Manager
 
-Manage, search, and quickly open saved paths in the terminal.
+Manage, search, and quickly open saved directory paths in the terminal.
