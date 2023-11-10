@@ -2,8 +2,10 @@ import {Form, showToast, popToRoot, useNavigation, Toast, ActionPanel, Action, e
 import { useState } from "react";
 import { promises as fs } from "fs";
 import path from "path";
+import fsExists from 'fs.promises.exists'
 
 const STORAGE_PATH: string = path.join(environment.supportPath, "paths.json");
+ensureFileExists();
 
 interface PathFormProps {
   initialPath?: string;
@@ -198,5 +200,21 @@ async function fetchPaths() {
   const rawData = await fs.readFile(STORAGE_PATH, "utf-8");
   const parsedData: Record<string, string> = JSON.parse(rawData);
   return parsedData
+}
+
+async function ensureFileExists() {
+  try {
+      if (!fsExists(STORAGE_PATH)) {
+        await fs.writeFile(STORAGE_PATH, JSON.stringify({}, null, 2));
+      }
+  } catch (error) {
+    showToast({
+      style: Toast.Style.Failure,
+      title: "Error",
+      message: "An error occurred while ensuring file existence."
+    });
+    throw error; // Rethrow the error to handle it in calling functions
+  }
+
 }
 
