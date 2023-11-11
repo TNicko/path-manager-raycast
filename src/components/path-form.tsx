@@ -1,11 +1,10 @@
 import {Form, showToast, popToRoot, useNavigation, Toast, ActionPanel, Action, environment } from "@raycast/api";
 import { useState } from "react";
-import { promises as fs } from "fs";
+import { promises as fs, constants } from "fs";
 import path from "path";
 import fsExists from 'fs.promises.exists'
 
 const STORAGE_PATH: string = path.join(environment.supportPath, "paths.json");
-ensureFileExists();
 
 interface PathFormProps {
   initialPath?: string;
@@ -64,9 +63,10 @@ export default function PathForm({ initialPath = "", initialAlias = "", mode}: P
   }
 
   async function handleSubmit() {
-    if (await validateForm()) {
+    try {
+      await ensureFileExists();
+      if (await validateForm()) {
       // Check if add or update form type
-      try {
         const data = await fetchPaths();
         if (mode === "add") {
           handleAdd(pathValue, aliasValue, data);
@@ -74,13 +74,13 @@ export default function PathForm({ initialPath = "", initialAlias = "", mode}: P
           handleUpdate(pathValue, aliasValue, data, initialAlias);
         }
         pop();
-      } catch (error) {
-        showToast({
-          style: Toast.Style.Failure,
-          title: "Failed to load paths",
-          message: `${error}`,
-        });
       }
+    } catch (error) {
+      showToast({
+        style: Toast.Style.Failure,
+        title: "Failed to load paths",
+        message: `${error}`,
+    });
     }
   }
 
@@ -204,17 +204,19 @@ async function fetchPaths() {
 
 async function ensureFileExists() {
   try {
-      if (!fsExists(STORAGE_PATH)) {
-        await fs.writeFile(STORAGE_PATH, JSON.stringify({}, null, 2));
-      }
+      await fs.access(STORAGE_PATH, constants.F_OK);
   } catch (error) {
-    showToast({
-      style: Toast.Style.Failure,
-      title: "Error",
-      message: "An error occurred while ensuring file existence."
-    });
-    throw error; // Rethrow the error to handle it in calling functions
+      if (error instanceof Error && (error as NodeJS.ErrnoException).code === 'ENOENT') {
+        // File does not exist, create it
+        await fs.writeFile(STORAGE_PATH, JSON.stringify({}, null, 2));
+      } else {
+        // Other errors
+        showToast({
+          style: Toast.Style.Failure,
+          title: "Error",
+          message: "An error occurred while ensuring file existence."
+        });
+        throw error;
+      }
   }
-
 }
-
