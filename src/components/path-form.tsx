@@ -2,7 +2,6 @@ import {Form, showToast, popToRoot, useNavigation, Toast, ActionPanel, Action, e
 import { useState } from "react";
 import { promises as fs, constants } from "fs";
 import path from "path";
-import fsExists from 'fs.promises.exists'
 
 const STORAGE_PATH: string = path.join(environment.supportPath, "paths.json");
 
