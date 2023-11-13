@@ -2,8 +2,6 @@
 
 <img src="assets/512px-Rounded.png" alt="Path Manager Icon" width="100" height="100">
 
-## Overview
-
 Path Manager allows you to easily manage and navigate to various file paths on your system. With a simple and intuitive interface, you can add, list, and open paths with aliases for quick access.
 
 ## Features
