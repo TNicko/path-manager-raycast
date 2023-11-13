@@ -8,7 +8,7 @@ Path Manager allows you to easily manage and navigate to various file paths on y
 
 ### Add Path
 
-<img src="assets/path-manager-1.png" alt="Add Path Screenshot" width="500" height="300">
+<img src="metadata/path-manager-1.png" alt="Add Path Screenshot" width="500" height="300">
 Store a directory path with an alias for easy access later. Simply input the full directory path and assign an alias. The path is then saved to a local database or file for later use.
 
 - **Inputs**:
@@ -17,12 +17,12 @@ Store a directory path with an alias for easy access later. Simply input the ful
 
 ### List Paths
 
-<img src="assets/path-manager-4.png" alt="List Paths Screenshot" width="500" height="300">
+<img src="metadata/path-manager-4.png" alt="List Paths Screenshot" width="500" height="300">
 View all your saved paths and their aliases. Provides a search function to quickly locate a path, along with options to go to the path in the terminal, delete, edit, or add new paths.
 
 ### Go To Path
 
-<img src="assets/path-manager-3.png" alt="Go To Path Screenshot" width="500" height="300">
+<img src="metadata/path-manager-3.png" alt="Go To Path Screenshot" width="500" height="300">
 Open a terminal tab navigating to the chosen path. Enter the path alias or the path you want to navigate to, and the extension takes care of the rest.
 
 - **Inputs**:
