@@ -1,6 +1,6 @@
 # Path Manager Raycast Extension
 
-![Path Manager Icon](assets/512px-Rounded.png)
+<img src="assets/512px-Rounded.png" alt="Path Manager Icon" width="100" height="100">
 
 ## Overview
 
@@ -10,8 +10,8 @@ Path Manager allows you to easily manage and navigate to various file paths on y
 
 ### Add Path
 
-![Add Path Screenshot](metadata/path-manager-1.png)
-The **Add Path** command lets you store a file path with an alias for easy access later. Simply input the full directory path and assign an alias. The path is then saved to a local database or file for later use.
+<img src="metadata/path-manager-1.png" alt="Add Path Screenshot" width="500" height="300">
+Store a directory path with an alias for easy access later. Simply input the full directory path and assign an alias. The path is then saved to a local database or file for later use.
 
 - **Inputs**:
   - `Path`: The full directory path you want to save.
@@ -19,24 +19,16 @@ The **Add Path** command lets you store a file path with an alias for easy acces
 
 ### List Paths
 
-![List Paths Screenshot](metadata/path-manager-3.png)
-With the **List Paths** command, you can view all your saved paths and their aliases. This command provides a search function to quickly locate a path, along with options to go to the path in the terminal, delete, edit, or add new paths.
-
-- **Features**:
-  - Search functionality
-  - Action Panel Options:
-    - Go to path in terminal
-    - Delete path
-    - Edit path
-    - Add path
+<img src="metadata/path-manager-3.png" alt="List Paths Screenshot" width="500" height="300">
+View all your saved paths and their aliases. Provides a search function to quickly locate a path, along with options to go to the path in the terminal, delete, edit, or add new paths.
 
 ### Open Path
 
-![Go To Path Screenshot](metadata/path-manager-4.png)
-The **Go To Path** command allows you to open a terminal tab navigating to the chosen path. Enter the alias of the path you want to navigate to, and the extension takes care of the rest.
+<img src="metadata/path-manager-4.png" alt="Go To Path Screenshot" width="500" height="300">
+Open a terminal tab navigating to the chosen path. Enter the path alias or the path you want to navigate to, and the extension takes care of the rest.
 
 - **Inputs**:
-  - `Alias`: The alias of the path you want to open.
+  - `Alias` or `Path`: The alias of the path or full path you want to open.
 
 ## Configuration
 
