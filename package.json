@@ -3,7 +3,7 @@
   "name": "path-manager",
   "title": "Path Manager",
   "description": "Manage, search, and quickly open saved directory paths in the terminal.",
-  "icon": "command-icon.png",
+  "icon": "512px-Rounded.png",
   "author": "Headrsh",
   "preferences": [
     {
